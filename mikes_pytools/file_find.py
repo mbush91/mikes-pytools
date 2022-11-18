@@ -12,13 +12,13 @@ class FileFind :
     """
 
     @staticmethod
-    def recursive_by_extension(ext:str,path:str) :
+    def recursive_by_extension(ext:str,path:str,ignore=None) :
         """_summary_
 
         Args:
             ext (str): Extension not including '.'
             path (str): Path to root folder
-
+            ignore (list): List of filenames to ignore
         Returns:
             list: List of files
         """
@@ -27,7 +27,14 @@ class FileFind :
         files = glob.glob(os.path.join(path,"*"),recursive=True)
         for item in files :
             if os.path.isdir(item) :
-                out += FileFind.recursive_by_extension(ext,item)
+                out += FileFind.recursive_by_extension(ext,item,ignore=ignore)
             elif os.path.splitext(item)[-1] == '.'+ext :
-                out.append(item)
+                if ignore is not None :
+                    if os.path.basename(item) not in ignore :
+                        out.append(item)
+                else :
+                    out.append(item)
         return out
+
+
+FileFind.recursive_by_extension('py','./',ignore=["test"])
